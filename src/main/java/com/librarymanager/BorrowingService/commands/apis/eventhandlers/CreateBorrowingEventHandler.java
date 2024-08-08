@@ -19,5 +19,6 @@ public class CreateBorrowingEventHandler {
 
         target.setId(event.getAggregateIdentifier());
         borrowingRepository.save(target);
+        event.setBorrowing(target);
     }
 }

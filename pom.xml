@@ -11,9 +11,9 @@
 	</parent>
 	<groupId>com.librarymanager</groupId>
 	<artifactId>BorrowingService</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.0.1</version>
 	<name>BorrowingService</name>
-	<description>Demo project for Spring Boot</description>
+	<description>BorrowingService for librarymanager</description>
 	<url/>
 	<licenses>
 		<license/>
@@ -95,6 +95,11 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.librarymanager</groupId>
+			<artifactId>CommunicationStructure</artifactId>
+			<version>0.0.1</version>
 		</dependency>
 	</dependencies>
 

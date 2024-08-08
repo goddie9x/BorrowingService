@@ -2,6 +2,7 @@ package com.librarymanager.BorrowingService.commands.apis.commands;
 
 import com.librarymanager.BorrowingService.commands.apis.events.CreateBorrowingEvent;
 import com.librarymanager.BorrowingService.commands.apis.models.Borrowing;
+import com.librarymanager.CommunicationStructure.commands.commands.CommandAbstract;
 
 import lombok.Getter;
 import lombok.Setter;

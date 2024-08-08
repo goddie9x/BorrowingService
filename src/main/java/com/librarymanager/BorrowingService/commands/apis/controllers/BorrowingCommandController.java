@@ -25,7 +25,7 @@ public class BorrowingCommandController {
     public String addBorrowing(@RequestBody Borrowing entity) {
         commandGateway.sendAndWait(entity.genCreateBorrowingCommand());
 
-        return "Borrowed";
+        return "Created request borrowing book, please wait for minutes";
     }
     @PutMapping("update")
     public String updateBorrowing(@RequestBody Borrowing entity) {

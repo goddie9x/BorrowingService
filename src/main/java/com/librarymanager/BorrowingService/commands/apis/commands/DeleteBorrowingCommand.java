@@ -1,6 +1,7 @@
 package com.librarymanager.BorrowingService.commands.apis.commands;
 
 import com.librarymanager.BorrowingService.commands.apis.events.DeleteBorrowingEvent;
+import com.librarymanager.CommunicationStructure.commands.commands.CommandAbstract;
 
 import lombok.Getter;
 import lombok.Setter;

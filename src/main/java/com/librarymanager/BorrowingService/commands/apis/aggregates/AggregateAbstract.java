@@ -4,8 +4,9 @@ import org.axonframework.eventsourcing.EventSourcingHandler;
 import org.axonframework.modelling.command.AggregateIdentifier;
 import org.axonframework.modelling.command.AggregateLifecycle;
 
-import com.librarymanager.BorrowingService.commands.apis.commands.ICommand;
-import com.librarymanager.BorrowingService.commands.apis.events.IEvent;
+import com.librarymanager.CommunicationStructure.commands.commands.ICommand;
+import com.librarymanager.CommunicationStructure.commands.events.IEvent;
+
 
 public abstract class AggregateAbstract {
     @AggregateIdentifier
