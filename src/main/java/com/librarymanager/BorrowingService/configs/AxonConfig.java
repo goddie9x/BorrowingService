@@ -11,7 +11,9 @@ public class AxonConfig {
     public XStream xStream() {
         XStream xStream = new XStream();
 
-        xStream.allowTypesByWildcard(new String[] { "com.librarymanager.**" });
+        xStream.allowTypesByWildcard(new String[] {
+                "com.librarymanager.**"
+        });
         return xStream;
     }
 }

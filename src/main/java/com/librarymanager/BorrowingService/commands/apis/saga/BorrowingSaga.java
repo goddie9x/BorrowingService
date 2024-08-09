@@ -9,7 +9,7 @@ import org.axonframework.queryhandling.QueryGateway;
 import org.axonframework.spring.stereotype.Saga;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.librarymanager.BorrowingService.commands.apis.commands.DeleteBorrowingCommand;
+import com.librarymanager.BorrowingService.commands.apis.data.BorrowingRepository;
 import com.librarymanager.BorrowingService.commands.apis.events.CreateBorrowingEvent;
 import com.librarymanager.BorrowingService.commands.apis.models.Borrowing;
 import com.librarymanager.BorrowingService.exceptions.BookBorrowedException;
@@ -26,40 +26,31 @@ public class BorrowingSaga {
     private transient CommandGateway commandGateway;
     @Autowired
     private transient QueryGateway queryGateway;
+    @Autowired
+    private BorrowingRepository borrowingRepository;
 
     @StartSaga
     @SagaEventHandler(associationProperty = "aggregateIdentifier")
     private void handle(CreateBorrowingEvent event) {
         Borrowing borrowing = event.getBorrowing();
-        CompletableFuture<BookResponse> getBook = queryGateway
-                .query(new GetBookByIdQuery(borrowing.getBookId()), BookResponse.class);
-        CompletableFuture<EmployeeResponse> getEmployee = queryGateway
-                .query(new GetEmployeeByIdQuery(borrowing.getEmployeeId()), EmployeeResponse.class);
-        CompletableFuture<Void> combinedGetBookAndGetEmployee = CompletableFuture.allOf(getBook, getEmployee);
-        
-        combinedGetBookAndGetEmployee.thenAccept(v -> {
-            try {
-                BookResponse bookResponse = getBook.get();
-                EmployeeResponse employeeResponse = getEmployee.get();
 
-                handleBorrowBook(bookResponse, employeeResponse);
+        CompletableFuture<BookResponse> bookFuture = queryGateway.query(new GetBookByIdQuery(borrowing.getBookId()), BookResponse.class);
+        CompletableFuture<EmployeeResponse> employeeFuture = queryGateway.query(new GetEmployeeByIdQuery(borrowing.getEmployeeId()), EmployeeResponse.class);
+
+        CompletableFuture.allOf(bookFuture, employeeFuture).thenAccept(v -> {
+            try {
+                BookResponse bookResponse = bookFuture.get();
+                EmployeeResponse employeeResponse = employeeFuture.get();
+
+                handleBorrowBook(bookResponse, employeeResponse, borrowing);
             } catch (Exception e) {
-                rollbackBorrowBook(borrowing.getId());
             }
-        })
-        .exceptionally(ex -> {
-            ex.printStackTrace();
-            rollbackBorrowBook(borrowing.getId());
+        }).exceptionally(ex -> {
             return null;
         });
     }
 
-    private void rollbackBorrowBook(String id) {
-        commandGateway.sendAndWait(new DeleteBorrowingCommand(id));
-    }
-
-    private void handleBorrowBook(BookResponse bookResponse,
-            EmployeeResponse employeeResponse) throws EmployeeDisciplinedException, BookBorrowedException {
+    private void handleBorrowBook(BookResponse bookResponse, EmployeeResponse employeeResponse, Borrowing borrowing) throws EmployeeDisciplinedException, BookBorrowedException {
         if (employeeResponse.getIsDisciplined()) {
             throw new EmployeeDisciplinedException();
         }
@@ -67,6 +58,10 @@ public class BorrowingSaga {
             throw new BookBorrowedException();
         }
         bookResponse.setIsReady(false);
-        commandGateway.sendAndWait(new UpdateBookCommand(bookResponse));
+        try {
+            commandGateway.sendAndWait(new UpdateBookCommand(bookResponse));
+            borrowingRepository.save(borrowing);            
+        } catch (Exception e) {
+        }
     }
 }

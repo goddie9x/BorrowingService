@@ -6,6 +6,7 @@ import org.axonframework.spring.stereotype.Aggregate;
 import com.librarymanager.BorrowingService.commands.apis.commands.CreateBorrowingCommand;
 import com.librarymanager.BorrowingService.commands.apis.commands.DeleteBorrowingCommand;
 import com.librarymanager.BorrowingService.commands.apis.commands.UpdateBorrowingCommand;
+import com.librarymanager.CommunicationStructure.commands.aggreagtes.AggregateAbstract;
 
 import lombok.NoArgsConstructor;
 
